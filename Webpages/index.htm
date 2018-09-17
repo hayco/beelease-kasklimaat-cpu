@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beelease :: Kasklimaat CPU</title>
+    <link rel="stylesheet" type="text/css" href="beelease.css">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["gauge"]});
+    </script>
+
+</head>
+<body onload="startAJAX()">
+    <div style="text-align:center;"> <img src="beelease.png">  </div>
+
+    <br>
+    <div style="text-align:center;">
+        <div id="chart1" style="width: 110px; height: 100px; display:inline-block;"></div>
+        <div id="chart2" style="width: 110px; height: 100px; display:inline-block;"></div>
+    </div>
+    <br> <br>
+
+    <div style="text-align:center;">
+        <button style="width:10em;height:3em" id="Rly1" onmousedown="newAJAXCommand('dscript.cgi?Rly1=2');">Links omhoog</button>
+        <button style="width:10em;height:3em" id="Rly2" onmousedown="newAJAXCommand('dscript.cgi?Rly2=2');">Links omlaag</button>
+        <button style="width:10em;height:3em" id="Rly3" onmousedown="newAJAXCommand('dscript.cgi?Rly3=2');">Rechts omhoog</button>
+        <button style="width:10em;height:3em" id="Rly4" onmousedown="newAJAXCommand('dscript.cgi?Rly4=2');">Rechts omlaag</button>
+    </div>
+
+    <br><br><br>
+    <div id="container2">
+      <div class='FlexSlot'> Hall 1<img class='Hall' id='AN1' src='DarkOff.png' /></div>
+      <div class='FlexSlot'> Hall 2<img class='Hall' id='AN2' src='DarkOff.png' /></div>
+      <div class='FlexSlot'> Hall 3<img class='Hall' id='AN3' src='DarkOff.png' /></div>
+      <div class='FlexSlot'> Hall 4<img class='Hall' id='AN4' src='DarkOff.png' /></div>
+    </div>
+
+    <br><br>
+    <div style="text-align:center;">
+        <div id="hall1" style="width: 110px; height: 100px; display:inline-block;"></div>
+        <div id="hall2" style="width: 110px; height: 100px; display:inline-block;"></div>
+        <div id="hall3" style="width: 110px; height: 100px; display:inline-block;"></div>
+        <div id="hall4" style="width: 110px; height: 100px; display:inline-block;"></div>
+    </div>
+    <br><br><br>
+    <div align='center' style="margin-right:20px">Hall 1 waarde <input id='AD1' type='text' readonly='true'></div>
+    <div align='center' style="margin-right:20px">Hall 2 waarde <input id='AD2' type='text' readonly='true'></div>
+    <div align='center' style="margin-right:20px">Hall 3 waarde <input id='AD3' type='text' readonly='true'></div>
+    <div align='center' style="margin-right:20px">Hall 4 waarde <input id='AD4' type='text' readonly='true'></div>
+
+    <br>
+
+
+<script type="text/javascript">
+var BoardTemp, Voltage;
+
+function ajaxUpdate()
+{
+    document.getElementById('Rly1').style.backgroundColor = (getValue('Rly1')=='1') ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,255,0.2)';
+    document.getElementById('Rly2').style.backgroundColor = (getValue('Rly2')=='1') ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,255,0.2)';
+    document.getElementById('Rly3').style.backgroundColor = (getValue('Rly3')=='1') ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,255,0.2)';
+    document.getElementById('Rly4').style.backgroundColor = (getValue('Rly4')=='1') ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,255,0.2)';
+    BoardTemp = Number(getValue('BrdTemp')/10).toFixed(1);
+    Voltage = Number(getValue('Volts')/10).toFixed(1);
+
+    document.getElementById('AN1').src = (getValue('AN1') == 0 ? 'DarkOff.png' : (getValue('AN1') > 500) ? 'GreenOn.png' : 'RedOn.png');
+    document.getElementById('AN2').src = (getValue('AN2') == 0 ? 'DarkOff.png' : (getValue('AN2') > 500) ? 'GreenOn.png' : 'RedOn.png');
+    document.getElementById('AN3').src = (getValue('AN3') == 0 ? 'DarkOff.png' : (getValue('AN3') > 500) ? 'GreenOn.png' : 'RedOn.png');
+    document.getElementById('AN4').src = (getValue('AN4') == 0 ? 'DarkOff.png' : (getValue('AN4') > 500) ? 'GreenOn.png' : 'RedOn.png');
+
+    document.getElementById('AD1').value = getValue('AN1')
+    document.getElementById('AD2').value = getValue('AN2')
+    document.getElementById('AD3').value = getValue('AN3')
+    document.getElementById('AD4').value = getValue('AN4')
+}
+</script>
+
+<script type="text/javascript">
+  google.setOnLoadCallback(drawChart);
+  function drawChart() {
+
+    var data1 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Temp.', 0],
+    ]);
+    var data2 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Voltage', 0],
+    ]);
+    var hd1 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Hall 1', 0],
+    ]);
+    var hd2 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Hall 2', 0],
+    ]);
+    var hd3 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Hall 3', 0],
+    ]);
+    var hd4 = google.visualization.arrayToDataTable([
+      ['Label', 'Value'],
+      ['Hall 4', 0],
+    ]);
+
+    var BrdOptions = {
+      width: 110, height: 120,
+      min: 0, max: 60,
+      greenColor: '#80ff80', greenFrom: 15, greenTo: 45,
+      yellowColor: 'ffff00', yellowFrom:0, yellowTo: 15,
+      redColor: '#FF8080', redFrom: 45, redTo: 60,
+      minorTicks: 5
+    };
+    var VoltOptions = {
+      width: 110, height: 120,
+      min: 0, max: 25,
+      greenColor: '#80ff80', greenFrom: 10, greenTo: 15,
+      yellowColor: 'ffff00', yellowFrom:0, yellowTo: 10,
+      redColor: '#FF8080', redFrom: 15, redTo: 25,
+      minorTicks: 5
+    };
+    var HallOptions = {
+      width: 110, height: 120,
+      min: 0, max: 1023,
+      greenColor: '#80ff80', greenFrom: 500, greenTo: 1023,
+      yellowColor: 'ffff00', yellowFrom:0, yellowTo: 14,
+      redColor: '#FF8080', redFrom: 15, redTo: 499,
+      minorTicks: 5
+    };
+
+    var chart1 = new google.visualization.Gauge(document.getElementById('chart1'));
+    var chart2 = new google.visualization.Gauge(document.getElementById('chart2'));
+    var hall1 = new google.visualization.Gauge(document.getElementById('hall1'));
+    var hall2 = new google.visualization.Gauge(document.getElementById('hall2'));
+    var hall3 = new google.visualization.Gauge(document.getElementById('hall3'));
+    var hall4 = new google.visualization.Gauge(document.getElementById('hall4'));
+
+    chart1.draw(data1, BrdOptions);
+    chart2.draw(data2, VoltOptions);
+    hall1.draw(hd1, HallOptions);
+    hall2.draw(hd2, HallOptions);
+    hall3.draw(hd3, HallOptions);
+    hall4.draw(hd4, HallOptions);
+
+    setInterval(function() {
+      data1.setValue(0, 1, BoardTemp);
+      data2.setValue(0, 1, Voltage);
+      hd1.setValue(0, 1, getValue('AN1'));
+      hd2.setValue(0, 1, getValue('AN2'));
+      hd3.setValue(0, 1, getValue('AN3'));
+      hd4.setValue(0, 1, getValue('AN4'));
+
+      chart1.draw(data1, BrdOptions);
+      chart2.draw(data2, VoltOptions);
+      hall1.draw(hd1, HallOptions);
+      hall2.draw(hd2, HallOptions);
+      hall3.draw(hd3, HallOptions);
+      hall4.draw(hd4, HallOptions);
+    }, 1000);
+  }
+</script>
+</body>
+</html>

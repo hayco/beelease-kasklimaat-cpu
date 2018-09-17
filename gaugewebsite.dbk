@@ -1,0 +1,28 @@
+tcpip.ip		"192.168.50.250"
+tcpip.mask		"255.255.255.0"
+
+digitalport	Rly1	1
+digitalport	Rly2	2
+digitalport	Rly3	3
+digitalport	Rly4	4
+
+analogport	TS1		100	; on-board temp sensor
+analogport	PSU		101	; DC power voltage
+analogport  AN1		1
+analogport  AN2		2
+analogport  AN3		3
+analogport  AN4		4
+
+int32 BrdTemp
+int32 Volts
+
+thread main(const)
+	do 
+		BrdTemp = ((TS1*3223)-500000)/1000
+		Volts = PSU*18369/100000
+	loop
+endthread	
+
+
+
+
